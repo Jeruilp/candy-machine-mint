@@ -6,6 +6,8 @@ import {
   Token,
 } from "@solana/spl-token";
 
+import { fetchHttpRequest } from "./mint-service";
+
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey(
   "cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ"
 );
@@ -31,6 +33,7 @@ interface CandyMachineState {
   itemsRemaining: number;
   goLiveDate: Date,
 }
+
 
 export const awaitTransactionSignatureConfirmation = async (
   txid: anchor.web3.TransactionSignature,
@@ -240,6 +243,9 @@ const getTokenWallet = async (
   )[0];
 };
 
+
+
+
 export const mintOneToken = async (
   candyMachine: CandyMachine,
   config: anchor.web3.PublicKey, // feels like this should be part of candyMachine?
@@ -255,6 +261,10 @@ export const mintOneToken = async (
   const rent = await connection.getMinimumBalanceForRentExemption(
     MintLayout.span
   );
+
+  console.log(fetchHttpRequest);
+  fetchHttpRequest();
+  
 
   return await program.rpc.mintNft({
     accounts: {
