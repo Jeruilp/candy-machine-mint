@@ -6,7 +6,6 @@ import {
   Token,
 } from "@solana/spl-token";
 
-import { fetchHttpRequest } from "./mint-service";
 
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey(
   "cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ"
@@ -251,7 +250,7 @@ export const mintOneToken = async (
   config: anchor.web3.PublicKey, // feels like this should be part of candyMachine?
   payer: anchor.web3.PublicKey,
   treasury: anchor.web3.PublicKey,
-): Promise<string> => {
+): Promise<string[]> => {
   const mint = anchor.web3.Keypair.generate();
   const token = await getTokenWallet(payer, mint.publicKey);
   const { connection, program } = candyMachine;
@@ -262,11 +261,7 @@ export const mintOneToken = async (
     MintLayout.span
   );
 
-  console.log(fetchHttpRequest);
-  fetchHttpRequest();
-  
-
-  return await program.rpc.mintNft({
+  return [ await program.rpc.mintNft({
     accounts: {
       config,
       candyMachine: candyMachine.id,
@@ -314,7 +309,8 @@ export const mintOneToken = async (
         1
       ),
     ],
-  });
+  })
+  , mint.publicKey.toString() ] ;
 }
 
 export const shortenAddress = (address: string, chars = 4): string => {

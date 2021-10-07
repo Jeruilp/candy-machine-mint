@@ -19,6 +19,8 @@ import {
   shortenAddress,
 } from "./candy-machine";
 
+import { onCreateMint } from "./mint-service";
+
 const ConnectButton = styled(WalletDialogButton)``;
 
 const CounterText = styled.span``; // add your styles here
@@ -87,12 +89,14 @@ const Home = (props: HomeProps) => {
     try {
       setIsMinting(true);
       if (wallet && candyMachine?.program) {
-        const mintTxId = await mintOneToken(
+        const aux = await mintOneToken(
           candyMachine,
           props.config,
           wallet.publicKey,
           props.treasury
         );
+        const mintTxId = aux[0];
+        const mint_string = aux[1];
 
         const status = await awaitTransactionSignatureConfirmation(
           mintTxId,
@@ -103,6 +107,8 @@ const Home = (props: HomeProps) => {
         );
 
         if (!status?.err) {
+          onCreateMint( '"'+mint_string+'",' );
+
           setAlertState({
             open: true,
             message: "Congratulations! Mint succeeded!",
